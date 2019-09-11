@@ -1,0 +1,98 @@
+{extend name="layout/dialog" /}
+
+{block name='content'}
+
+<form class="form-horizontal content" method="POST" id="default_form">
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('模板名称')}</label>
+        <!-- 多选 -->
+        <div class="col-sm-8">
+            <input type="text" name="t_name" class="form-control" data-rule="required" value="{$tpl_info['title'] ?? ''}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('账户类型')}</label>
+        <!-- 多选 -->
+        <div class="col-sm-8">
+            <select name="account_type" id="account_type" class="form-control selectpicker" onchange="indexController.change_tmpl_account_type($(this))">
+                {foreach $account_type_list as $k => $v}
+                <option value="{$k}" {if isset($tpl_info) && $tpl_info['type'] == $k}selected{/if}>{$v}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('账户')}</label>
+        <!-- 多选 -->
+        <div class="col-sm-8">
+            <input type="text" name="account" class="form-control" value="{$tpl_info['account'] ?? ''}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('账户姓名')}</label>
+        <!-- 多选 -->
+        <div class="col-sm-8">
+            <input type="text" name="account_user" class="form-control" value="{$tpl_info['account_user'] ?? ''}">
+        </div>
+    </div>
+
+    <div class="form-group bank-div" {if isset($tpl_info) && $tpl_info['type'] == '2'}{else /}style="display:none;"{/if} >
+        <label class="col-sm-2 control-label">{:__('开户银行')}</label>
+        <!-- 多选 -->
+        <div class="col-sm-8">
+            <input type="text" name="bank_name" class="form-control" value="{$tpl_info['type_attr'] ?? ''}">
+        </div>
+    </div>
+
+    <!-- <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('账户状态')}</label>
+        <div class="col-sm-8">
+            <select name="status" id="status" class="form-control selectpicker">
+                {foreach $status_list as $k => $v}
+                <option value="{$k}" {if isset($tpl_info) && $tpl_info['status'] == $k}selected{/if}>{$v}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div> -->
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label"></label>
+        <div class="col-sm-8">
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-success">{:__('提交')}</button>
+            </span>
+        </div>
+    </div>
+</form>
+
+{/block}
+
+{block name='js'}
+<script>
+    // 阻止默认的提交行为，使用自定义的提交方法
+    $('#default_form').on('valid.form', function (e) {
+        e.preventDefault();
+        layer.load();
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serializeArray(),
+            dataType: 'JSON',
+            success: function (ret) {
+                layer.closeAll();
+                if (ret.code != 0) layer.alert(ret.msg);
+                else layer.alert(ret.msg, {
+                    'yes': function () {
+                        parent.location.reload();
+                    }
+                });
+            }
+        })
+    });
+</script>
+
+{/block}

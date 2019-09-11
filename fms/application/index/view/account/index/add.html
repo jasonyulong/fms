@@ -1,0 +1,264 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+<form class="form-horizontal content" method="POST" id="default_form">
+    <input type="hidden" name="account_id" value="{$this_account.id ?? 0}">
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('账户名称')}</label>
+        <div class="col-sm-8">
+            <input type="text" name="title" class="form-control" placeholder="" value="{$this_account['title'] ?? ''}" data-rule="required">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('公司名称')}</label>
+        <div class="col-sm-8">
+            <select name="company_id" class="form-control selectpicker" data-actions-box="true" data-live-search="true">
+                {foreach $company_list as $key => $value}
+                <option value="{$key}" {if isset($is_edit) && $this_account['company_id'] == $key}selected{/if}>{$value['company_name']}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('账户管理员')}</label>
+        <!-- 多选 -->
+        <div class="col-sm-8">
+            <select name="admin_id[]" class="form-control selectpicker" title="{:__('请选择')}" data-actions-box="true"
+                    data-live-search="true" data-select-all-text="{:__('全选')}" data-deselect-all-text="{:__('全不选')}" multiple>
+                {foreach $admin_list as $value}
+                <option value="{$value['id']}" {if isset($is_edit) && in_array($value['id'], $all_admin_id)}selected{/if}>{$value['username']}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('账户类型')}</label>
+        <div class="col-sm-4">
+            <select name="type" class="form-control" onchange="indexController.change_type($(this))">
+                {foreach $account_type as $key => $value}
+                {if $key > 1}
+                <option value="{$key}" {if isset($is_edit) && $this_account['type'] == $key}selected{/if}>{$value}</option>
+                {/if}
+                {/foreach}
+            </select>
+        </div>
+        <div class="col-sm-3 bank_type_div" style="{if isset($is_edit) && $this_account['type'] == 3}display: block{else}display: none{/if}">
+            <select name="bank_type" class="form-control">
+                {foreach $bank_type as $key => $value}
+                <option value="{$key}" {if isset($is_edit) && $this_account['bank_type'] == $key}selected{/if}>{$value}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('使用类型')}</label>
+        <div class="col-sm-2">
+            <select name="type_scene" class="form-control">
+                {foreach $type_scene as $key => $value}
+                <option value="{$key}" {if isset($is_edit) && $this_account['type_scene'] == $key}selected{/if}>{$value}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('账户属性')}</label>
+        <div class="col-sm-3">
+            <select name="account_platform" class="form-control" onchange="indexController.change_platform($(this))" >
+                {foreach $third_pay_account_type as $key => $value}
+                <option value="{$key}" {if isset($is_edit) && $edit_account_type== $key}selected{/if}>{$value}</option>
+                {/foreach}
+                <option value="bank_card" {if isset($is_edit) && $edit_account_type=='bank_card'}selected{/if}>{:__('国内银行卡')}</option>
+                <!--<option value="shop_account" {if isset($is_edit) && $edit_account_type=='shop_account'}selected{/if}>{:__('平台店铺')}</option>-->
+            </select>
+        </div>
+    </div>
+    <div class="form-group ebay_div" {if isset($is_edit) && $edit_account_type=='shop_account'}{else /}style="display:none;"{/if}>
+    <label class="col-sm-2 control-label">{:__('账户平台')}</label>
+    <div class="col-sm-6">
+        <select name="third_platform" class="form-control">
+            {foreach $platform_list as $key => $value}
+            <option value="{$value}" {if isset($is_edit) && $this_account['type_attr'] == $value}selected{/if}>{$value}</option>
+            {/foreach}
+        </select>
+    </div>
+    </div>
+
+    <div class="form-group ebay_div" {if isset($is_edit) && $edit_account_type=='shop_account'}{else /}style="display:none;"{/if}>
+    <label class="col-sm-2 control-label">{:__('订单站点')}</label>
+    <div class="col-sm-4">
+        <select name="ebay_site" class="form-control">
+            {foreach $all_ebay_site as $key => $value}
+            <option value="{$value}" {if isset($is_edit) && $this_account['account_mark'] == $value}selected{/if}>{$value}</option>
+            {/foreach}
+        </select>
+    </div>
+    </div>
+
+    <div class="form-group bank_div" {if isset($is_edit) && $edit_account_type=='bank_card'}{else /}style="display:none;"{/if}>
+    <label class="col-sm-2 control-label">{:__('开户银行')}</label>
+    <div class="col-sm-10">
+        <select name="province_id" id="province_id" class=" selectpicker" title="{:__('省份')}" data-live-search="true">
+            {foreach $all_province as $value}
+            <option value="{$value['province_id']}" {if isset($is_edit) && $this_account['province'] == $value['province']}selected{/if}>{$value['province']}</option>
+            {/foreach}
+        </select>
+        <select name="city_id" id='city_id' class=" selectpicker" title="{:__('城市')}" data-live-search="true"></select>
+        <select name="bank_id" id="bank_id" class=" selectpicker" title="{:__('银行名称')}" data-live-search="true">
+            {foreach $all_banks as $value}
+            <option value="{$value['bank_id']}" {if isset($is_edit) && isset($bank_info) && $edit_account_type=='bank_card' && $bank_info['bank_name'] == $value['bank_name']}selected{/if}>{$value['bank_name']}</option>
+            {/foreach}
+        </select>
+        <select name="sub_bank_id" id="sub_bank_id" class=" selectpicker" title="{:__('银行支行')}" data-live-search="true"></select>
+    </div>
+    </div>
+
+    <div class="form-group bank_div" {if isset($is_edit) && $edit_account_type=='bank_card'}{else /}style="display:none;"{/if}>
+    <label class="col-sm-2 control-label">银行卡号</label>
+    <div class="col-sm-8">
+        <input type="text" name="bank_cardno" class="form-control" placeholder="" value="{if isset($is_edit)}{$this_account['account']}{/if}">
+    </div>
+    </div>
+
+    <div class="form-group account_div" id="balance_div" {if isset($is_edit) && $edit_account_type=='bank_card'}style="display:none;"{/if}>
+    <label class="col-sm-2 control-label">账户号</label>
+    <div class="col-sm-10 form-inline">
+        <input type="text" name='third_account' class="form-control" placeholder="" value="{$this_account['account'] ?? ''}">
+        <button class="btn btn-danger" type="button" onclick="indexController.add_sub_account($(this))">新增余额账户</button>
+    </div>
+    </div>
+
+    {if isset($is_edit)}
+    {foreach $sub_account_list as $key => $sub_acc}
+    <div class="form-group sub_account_div">
+        <label class="col-sm-2 control-label sub_account_index">余额账户</label>
+        <div class="col-sm-10 form-inline">
+            <input type="hidden" name="sub_funds_id[]" value="{$sub_acc['id']}">
+            <input type="hidden" name="sub_account_id[]" value="{$sub_acc['account_id']}">
+            <input type="hidden" name="sub_balance[]" value="{$sub_acc['account_funds']}">
+            <input type="text" name="sub_account[]" class="form-control sub_account" placeholder="别名" value="{$sub_acc['fund_name']}" style="width: 180px;">
+            <input type="text" name="" class="form-control" placeholder="余额" value="{$sub_acc['account_funds']}" disabled style="width: 160px;">
+            币种: <select name="sub_currency_type[]" class="form-control" title="{:__('币种')}">
+            {foreach $all_currency_type as $value}
+            <option value="{$value}" {if $sub_acc['account_currency'] == $value}selected{/if}>{$value}</option>
+            {/foreach}
+        </select>
+            {if $key > 0}
+            <button type="button" class="btn btn-warning" data-url="{:url('/index/account/index/del')}" onclick="indexController.remove_eidt_account($(this), {$sub_acc['id']});">移除</button>
+            {/if}
+        </div>
+    </div>
+    {/foreach}
+    {else}
+    <div class="form-group sub_account_div">
+        <!-- 默认用 account_id = 0 表示新添加的子用户 -->
+        <input type="hidden" name="sub_funds_id[]" value="0">
+        <input type="hidden" name="sub_account_id[]" value="0">
+        <label class="col-sm-2 control-label sub_account_index">余额账户</label>
+        <div class="col-sm-10 form-inline">
+            <input type="text" name="sub_account[]" class="form-control sub_account" placeholder="别名" style="width: 180px;">
+            <input type="text" name="sub_balance[]" class="form-control" placeholder="余额" style="width: 160px;">
+            币种: <select name="sub_currency_type[]" class="form-control" title="{:__('币种')}">
+            {foreach $all_currency_type as $value}
+            <option value="{$value}">{$value}</option>
+            {/foreach}
+        </select>
+            <!--<button type="button" class="btn btn-warning" onclick="indexController.remove_sub_account($(this));">移除</button>-->
+        </div>
+    </div>
+    {/if}
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">每日转账额度</label>
+        <div class="col-sm-4">
+            <input type="text" name="day_quota" class="form-control" placeholder="可不填" value="{if isset($is_edit)}{$this_account['day_quota']}{/if}">
+        </div>
+    </div>
+
+    <div class="form-group txfei">
+        <label class="col-sm-2 control-label">提现费率</label>
+        <div class="col-sm-4">
+            <input type="text" name="out_rate" class="form-control" placeholder="可不填" value="{if isset($is_edit)}{$this_account['out_rate']}{/if}">
+        </div>
+    </div>
+
+    <div class="form-group jyfei">
+        <label class="col-sm-2 control-label">交易费率</label>
+        <div class="col-sm-10 form-inline">
+            固定费: <input type="text" name="fixed_fee" class="form-control" placeholder="保留小数点后3位" value="{if isset($is_edit)}{$this_account['fixed_fee']}{/if}">
+            费率: <input type="text" name="fixed_rate" class="form-control" placeholder="" value="{if isset($is_edit)}{$this_account['fixed_rate']}{/if}">
+        </div>
+    </div>
+
+    <div class="layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed "> 确定提交</button>
+            <button type="reset" class="btn btn-default btn-embossed"> 重置</button>
+        </div>
+    </div>
+</form>
+
+<!-- 样式例子，用于克隆 -->
+<div style="display:none;" id='element_example'>
+    <div class="form-group sub_account_div">
+        <!-- 默认用 account_id = 0 表示新添加的子用户 -->
+        <input type="hidden" name="sub_funds_id[]" value="0">
+        <input type="hidden" name="sub_account_id[]" value="0">
+        <label class="col-sm-2 control-label sub_account_index">余额账户</label>
+        <div class="col-sm-10 form-inline">
+            <input type="text" name="sub_account[]" class="form-control sub_account" placeholder="别名" style="width: 180px;">
+            <input type="text" name="sub_balance[]" class="form-control" placeholder="余额" style="width: 160px;">
+            币种: <select name="sub_currency_type[]" class="form-control" title="{:__('币种')}">
+            {foreach $all_currency_type as $value}
+            <option value="{$value}">{$value}</option>
+            {/foreach}
+        </select>
+            <button type="button" class="btn btn-warning" onclick="indexController.remove_sub_account($(this));">移除</button>
+        </div>
+    </div>
+</div>
+
+{/block}
+{block name='js'}
+<script>
+    var all_cities = '{:json_encode($all_cities)}';
+
+    // 更改省份时
+    $('#province_id').change(function () {
+        var province_id = $(this).val();
+        var city_id = $('#city_id').val();
+        var bank_id = $('#bank_id').val();
+        indexController.change_province(province_id, all_cities);
+        indexController.change_bank(bank_id, province_id, city_id);
+    });
+
+    // 修改城市时
+    $('#city_id').change(function () {
+        var province_id = $('#province_id').val();
+        var city_id = $('#city_id').val();
+        var bank_id = $('#bank_id').val();
+        indexController.change_bank(bank_id, province_id, city_id);
+    });
+
+
+    // 更改 银行时，修改支行信息
+    $('#bank_id').change(function () {
+        var bank_id = $(this).val();
+        var province_id = $('#province_id').val();
+        var city_id = $('#city_id').val();
+        indexController.change_bank(bank_id, province_id, city_id);
+    });
+
+    // 阻止默认的提交行为，使用自定义的提交方法
+    $('#default_form').on('valid.form', function (e) {
+        e.preventDefault();
+        indexController.add_account($(this))
+    });
+
+    {if isset($is_edit) && $edit_account_type == 'bank_card'}
+    $(function () {
+        indexController.change_province('{$bank_info["province_id"]}', all_cities, '{$bank_info["city_id"]}');
+        indexController.change_bank('{$bank_info["bank_id"]}', '{$bank_info["province_id"]}', '{$bank_info["city_id"]}', '{$bank_info["sub_branch_id"]}');
+    });
+    {/if}
+</script>
+{/block}

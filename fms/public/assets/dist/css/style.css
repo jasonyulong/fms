@@ -1,0 +1,51 @@
+.error {color: red;font-size: 10px}
+.text-xs {font-size: 60%;}
+.main-header .navbar .nav > li > a {padding: 15px 20px}
+.left {float: left;}
+.right {float: right;}
+.block {display: block}
+.pagination {margin: 10px 0px;}
+.bootstrap-select .btn {max-width: 160px;}
+.control-label small {font-weight: 100; font-size: 80%; color: crimson}
+.skin-purple .nav-tabs-custom > .nav-tabs > li.active {border-top-color: #605ca8}
+.skin-purple-light .nav-tabs-custom > .nav-tabs > li.active {border-top-color: #605ca8}
+.content {margin-bottom: 50px;}
+.nav-tabs-custom > .nav-tabs > li > button {padding: 3px 5px;margin-top: 5px;margin-left: 10px;}
+.layer-footer {padding: 8px 20px;background-color: #ecf0f1;height: auto;text-align: inherit !important;left: 0;position: fixed;bottom: 0;width: 100%;}
+.text-success {color: #18bc9c;}
+a.text-success:hover, a.text-success:focus {color: #128f76;}
+.text-info {color: #3498db;}
+a.text-info:hover, a.text-info:focus {color: #217dbb;}
+.text-warning {color: #f39c12;}
+a.text-warning:hover, a.text-warning:focus {color: #c87f0a;}
+.text-danger {color: #e74c3c;}
+a.text-danger:hover, a.text-danger:focus {color: #d62c1a;}
+.bg-primary {color: #fff;background-color: #2c3e50;}
+a.bg-primary:hover, a.bg-primary:focus {background-color: #1a242f;}
+.bg-success {background-color: #dff0d8;}
+a.bg-success:hover, a.bg-success:focus {background-color: #c1e2b3;}
+.bg-info {background-color: #d9edf7;}
+a.bg-info:hover, a.bg-info:focus {background-color: #afd9ee;}
+.bg-warning {background-color: #fcf8e3;}
+a.bg-warning:hover, a.bg-warning:focus {background-color: #f7ecb5;}
+.bg-danger {background-color: #f2dede;}
+a.bg-danger:hover, a.bg-danger:focus {background-color: #e4b9b9;}
+.table th {background: #f8f8f8}
+.dropdown-menu .last a {padding: 5px 10px}
+.dropdown-menu > li > a > i {width: 20px; text-align: center}
+.fieldlist dd {display: block;margin: 5px 0;}
+.fieldlist dd input {display: inline-block;width: 300px;}
+.fieldlist dd input:first-child {width: 110px;}
+.fieldlist dd ins {width: 110px;display: inline-block;text-decoration: none;font-weight: bold;}
+.form-group .control-label {padding-top: 7px; text-align: right;}
+.table > tbody > tr > .small {font-size: 80%;line-height: 12px;}
+#treeview .jstree-container-ul .jstree-node {display: block;clear: both;}
+#treeview .jstree-leaf:not(:first-child) {float: left;background: none;margin-left: 0;width: auto;clear: none;}
+#treeview .jstree-leaf {float: left;margin-left: 0;padding-left: 24px;width: auto;clear: none;color: #777;}
+#treeview .jstree-leaf > .jstree-icon,
+#treeview .jstree-leaf .jstree-themeicon {display: none;}
+#treeview .jstree-children:before,
+#treeview .jstree-children:after {content: " ";display: table;}
+#treeview .jstree-children:after {clear: both;}
+#treeview .jstree-themeicon {display: none;}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {padding: 5px; line-height: 1.2;}

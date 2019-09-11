@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="{$config.language}">
+<head>
+    <!-- 加载样式及META信息 -->
+    {include file="common/meta" /}
+    {block name='css'}
+    <!-- 用来添加自定义的 样式 -->
+    <style>
+        .total-tr > th {
+            background-color: #FFE8FF;
+        }
+    </style>
+    {/block}
+</head>
+<body class="hold-transition skin-purple-light layout-top-nav">
+<div class="wrapper">
+    {include file="common/header" /}
+    <!-- Full Width Column -->
+    <div class="content-wrapper">
+        {block name='content'}
+        {/block}
+    </div>
+</div>
+<!-- 加载JS脚本 -->
+{include file="common/script" /}
+
+{block name='js'}
+<!-- 用来 添加自定义 的 js -->
+{/block}
+</body>
+</html>
+

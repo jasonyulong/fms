@@ -1,0 +1,32 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+<form id="add-form" class="form-horizontal dialog-form" role="form" data-toggle="validator" method="POST" action="">
+    <div class="container">
+        <section class="content">
+            <div class="form-group">
+                <label for="username" class="control-label">{:__('姓名')}:</label>
+                <input type="text" class="form-control" name="row[username]" value="{$admin.username}" disabled />
+            </div>
+            <div class="form-group">
+                <label for="email" class="control-label">{:__('邮箱')}:</label>
+                <input type="text" class="form-control" name="row[email]" value="{$admin.email}" data-rule="required;email" />
+            </div>
+            <div class="form-group">
+                <label for="mobile" class="control-label">{:__('手机号码')}:</label>
+                <input type="text" class="form-control" name="row[mobile]" value="{$admin.mobile}" data-rule="required" disabled/>
+            </div>
+            <div class="form-group">
+                <label for="password" class="control-label">{:__('密码')}:</label>
+                <input type="password" class="form-control" placeholder="{:__('如果不想更改，请将密码留空')}" autocomplete="new-password" name="row[password]" value=""/>
+            </div>
+        </section>
+    </div>
+    <div class=" layer-footer">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed ">{:__('确定提交')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('重置')}</button>
+        </div>
+    </div>
+</form>
+{/block}

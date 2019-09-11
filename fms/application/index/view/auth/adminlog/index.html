@@ -1,0 +1,59 @@
+{extend name="layout/default" /}
+{block name='content'}
+<div class="container">
+    {include file="common/map" /}
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-default color-palette-box">
+            <div class="box-header with-border">
+                <form id="add-form" class="form-inline" role="form" data-toggle="validator" method="get" action="">
+                    <button type="button" class="btn btn-sm btn-refresh"><i class="fa fa-refresh"></i></button>
+                    <input type="text" class="form-control input-sm" id="username" name="keywords" value="" placeholder="请输入管理员姓名"/>
+                    <button type="submit" class="btn btn-sm btn-primary btn-embossed "><i class="fa fa-search"></i> {:__('搜索')}</button>
+                </form>
+            </div>
+
+            <div class="box-body">
+                <table id="table" class="table table-bordered table-hover" width="100%">
+                    <head>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th>管理员</th>
+                            <th>标题</th>
+                            <th>Url</th>
+                            <th>IP</th>
+                            <th>创建时间</th>
+                            <th class="text-center">操作</th>
+                        </tr>
+                    </head>
+                    <tbody>
+                    {foreach $rows as $val}
+                    <tr>
+                        <td class="text-center">{$val.id}</td>
+                        <td>{$val.username}</td>
+                        <td>{$val.title}</td>
+                        <td>{:substr($val.url, 0, 60)}</td>
+                        <td>{$val.ip}</td>
+                        <td>{$val.createtime|date='Y-m-d H:i:s',###}</td>
+                        <td class="text-center">
+                            {if $auth->check('index/auth/adminlog/del')}
+                            <button type="button"
+                                    class="btn btn-danger btn-edit btn-ajax btn-xs"
+                                    options="{confirm:'确定要删除此项吗？'}"
+                                    title="{:__('删除')}"
+                                    href="{:url('/index/auth/adminlog/del', [$val.id])}"><i class="fa fa-trash"></i> {:__('删除')}
+                            </button>
+                            {/if}
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                {$page}
+            </div>
+
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+{/block}

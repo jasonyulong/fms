@@ -1,0 +1,29 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+
+<div class="box-body">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th class="text-center">账户</th>
+                <th class="text-center">平台</th>
+                <th class="text-center">账号名称</th>
+                <th class="text-center">站点</th>
+                <th class="text-center">币种</th>
+            </tr>
+        </thead>
+        <tbody>
+            {foreach $list as $v}
+            <tr>
+                <td class="text-center">{$receipt_account['account']}</td>
+                <td class="text-center">{$v['platform']}</td>
+                <td class="text-center">{$v['account_info']['account'] ?? ''}</td>
+                <td class="text-center">{$v['account_info']['site'] ?? ''}</td>
+                <td class="text-center">{$v['receipt_currency']}</td>
+            </tr>
+            {/foreach}
+        </tbody>
+    </table>
+</div>
+
+{/block}

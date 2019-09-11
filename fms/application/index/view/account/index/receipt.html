@@ -1,0 +1,103 @@
+{extend name="layout/default" /} 
+{block name='content'}
+<div class="container">
+    {include file="common/map" /}
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-default color-palette-box">
+            <div class="box-header with-border">
+                <form action="" method="GET" class="form-inline" role="form">
+                    <div class="input-group">
+                        <select name="type" class="form-control" title="{:__('第三方收款')}" onchange="indexController.change_pay_type($(this))">
+                            {foreach $third_pay_account_type as $key => $value}
+                            <option value="{$key}" {if $params['type'] == $key}selected{/if}>{$value}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select name="admin_id[]" class="form-control selectpicker" title="{:__('账户管理员')}" data-actions-box="true"
+                            data-live-search="true" data-select-all-text="{:__('全选')}" data-deselect-all-text="{:__('全不选')}"
+                            multiple>
+                            {foreach $admin_list as $value}
+                            <option value="{$value['id']}" {if isset($params['admin_id']) && in_array($value['id'], $params['admin_id'])}selected{/if}>{$value['username']}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select name="status" class="form-control " title="{:__('状态')}" data-actions-box="false"
+                            data-live-search="false" >
+                            <option value="">全部</option>
+                            <option value="0" {if isset($params['status']) && $params['status'] == '0'}selected{/if}>{:__('注销')}</option>
+                            <option value="1" {if isset($params['status']) && $params['status'] == '1'}selected{/if}>{:__('正常')}</option>
+                            <option value="2" {if isset($params['status']) && $params['status'] == '2'}selected{/if}>{:__('冻结')}</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select name="search_field" class="form-control " title="">
+                            <option value="account" {if isset($params['search_field']) && $params['search_field'] == 'account'}selected{/if}>{$account_type_list[$params['type']]}{:__('账户')}</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="search" name="search_value" id="input" class="form-control" placeholder="{:__('请输入关键字')}" value="{$params['search_value'] ?? ''}">
+                    </div>
+                    <div class="input-group">
+                        <button type="submit" class="btn bg-orange"><i class="fa fa-search"></i> {:__('搜索')}</button>
+                        
+                    </div>
+                </form>
+            </div>
+    
+            <div class="box-body">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <th class="text-center">{$account_type_list[$params['type']]}账户</th>
+                        <th class="text-center">账户管理员</th>
+                        <th class="text-center">状态</th>
+                        {foreach $platform_list as $value}
+                        <th class="text-center">{$value}</th>
+                        {/foreach}
+                        <th class="text-center">合计</th>
+                    </thead>
+                    <tbody>
+                        {foreach $account_list as $k => $v}
+                        <tr>
+                            <td class="text-center">
+                                <a href="javascript:void(0);">
+                                    <span  class="btn-dialog" title ="{:__('子账户详情')}" options="{area:['800px','600px']}" href="/index/account/index/subAccountDetail?account_id={$v['id']}">
+                                    {$v['account']}
+                                    </span>
+                                </a>
+                            </td>
+                            <td class="text-center">{$v['admins']}</td>
+                            <td class="text-center">{$account_status[$v['status']]}</td>
+                            {foreach $platform_list as $value}
+                            <td class="text-center">
+                                <a href="javascript:void(0);">
+                                    <span  class="btn-dialog" title ="{:__('收款账号详情')}" options="{area:['800px','600px']}" href="/index/account/index/receiptAccountDetail?platform={$value}&account_id={$v['id']}">
+                                    {if isset($v['platform_list'][$value])}
+                                    {$v['platform_list'][$value]['count']}
+                                    {else /}0
+                                    {/if}
+                                    </span>
+                                </a>
+                            </td>
+                            {/foreach}
+                            <td class="text-center"><a href="javascript:void(0);">
+                                    <span  class="btn-dialog" title ="{:__('收款账号详情')}" options="{area:['800px','600px']}" href="/index/account/index/receiptAccountDetail?account_id={$v['id']}">
+                                        {$v['platform_total']}
+                                </span>
+                            </a></td>
+                        </tr>
+                        {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {include file="layout/page"}
+    </section>
+</div>
+{/block} 
+{block name='js'}
+<script>
+</script>
+{/block}

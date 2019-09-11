@@ -1,0 +1,130 @@
+{extend name="layout/dialog" /}
+
+{block name='css'}
+<style>
+    fieldset.scheduler-border {
+    border: 1px groove #ddd !important;
+    padding: 0 1.4em 1.4em 1.4em !important;
+    margin: 0 0 1.5em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+}
+
+    legend.scheduler-border {
+        font-size: 1.2em !important;
+        font-weight: bold !important;
+        text-align: left !important;
+        width:auto;
+        padding:0 10px;
+        border-bottom:none;
+    }
+    #default_form .row {
+        margin: 10px 0;
+    }
+    .danger-text {
+        color: red;
+    }
+</style>
+{/block}
+{block name='content'}
+
+<form class="form-horizontal content" method="POST" id="default_form">
+
+    <div class="form-group form-inline">
+        <label class="col-sm-2 control-label">{:__('当前账户')}:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control input-sm" value="{$account_info['title']}" readonly>
+        </div>
+    </div>
+
+    {if $is_account}
+    <div class="form-group form-inline">
+        <label class="col-sm-2 control-label">{:__('余额账户')}</label>
+        <div class="col-sm-10">
+            <select name="fund_id" id="fund_id" class="form-control " title="{:__('请选择余额账户')}" onchange="indexController.change_withdraw_fund($(this))" style="width:120px;">
+                {foreach $acc_fund_list as $v}
+                <option value="{$v['id']}" data-fund="{$v['account_funds']}" data-currency="{$v['account_currency']}">{$v['fund_name']}</option>
+                {/foreach}
+            </select>
+            <span>{:__('当前余额')}:</span>
+            <input type="text" class="form-control input-sm balance" value="{$acc_fund_list[0]['account_funds'] ?? 0}" readonly style="width:80px;">
+            <span>{:__('币种')}:</span>
+            <input type="text" class="form-control input-sm balance_currency" value="{$acc_fund_list[0]['account_currency'] ?? 0}" readonly style="width:80px;">
+            &nbsp;
+            <span>{:__('提现金额')}:</span>
+            <input type="text" name="withdraw_money[]" class="form-control input-sm true-balance" data-rule="required;" style="width:100px;">
+        </div>
+    </div>
+    {else /}
+    {foreach $acc_fund_list as $v}
+    <div class="form-group form-inline">
+        <label class="col-sm-2 control-label">{:__('余额账户')}:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control input-sm" value="{$v['fund_name']}" readonly style="width:80px;">
+            <span>{:__('当前余额')}:</span>
+            <input type="text" class="form-control input-sm balance" value="{$v['account_funds']}" readonly style="width:80px;">
+            <span>{:__('币种')}:</span>
+            <span>{$v['account_currency']}</span>
+            &nbsp;
+            <span>{:__('提现金额')}:</span>
+            <input type="text" name="withdraw_money[]" class="form-control input-sm true-balance" data-rule="required;" max="{$v['account_funds']}" style="width:100px;">
+        </div>
+    </div>
+    {/foreach}
+    {/if}
+    
+    <div class="form-group form-inline">
+            <label class="col-sm-2 control-label">{:__('目标账户')}:</label>
+            <div class="col-sm-10">
+                <select name="withdraw_to" class="form-control selectpicker" title="{:__('请选择账户名称')}" data-actions-box="true" data-live-search="true"  data-rule="required">
+                    {foreach $all_fund_list as $k => $v}
+                    <option disabled>{$v['title']}</option>
+                        {foreach $v['fund_list'] as $_k => $_v}
+                        <option value="{$_v['id']}">|--{$_v['fund_name']}({$_v['account_currency']})</option>
+                        {/foreach}
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+    
+    <div class="form-group form-inline">
+        <label class="col-sm-2 control-label">{:__('备注')}:</label>
+        <div class="col-sm-8">
+            <textarea name="withdraw_remark" class="form-control" rows="3" style="width: 100%;"  data-rule="required;"></textarea>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label"></label>
+        <div class="col-sm-10">
+    
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">{:__('提交')}</button>
+            </span>
+        </div>
+    </div>
+</form>
+
+{/block}
+
+{block name='js'}
+<script>
+// 阻止默认的提交行为，使用自定义的提交方法
+    $('#default_form').on('valid.form', function (e) {
+        e.preventDefault();
+        layer.load();
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serializeArray(),
+            dataType: 'JSON',
+            success: function(ret) {
+                layer.closeAll();
+                if (ret.code != 0) layer.alert(ret.msg);
+                else layer.alert(ret.msg, {'yes': function() {parent.location.reload();}});
+            }
+        })
+    });
+</script>
+
+{/block}

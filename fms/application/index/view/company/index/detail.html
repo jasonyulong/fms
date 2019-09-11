@@ -1,0 +1,33 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+    <section class="content">
+        <div class="box-body" style="padding-left:0px;">
+        <form action="" method="POST" class="form-inline" role="form">
+            <div class="form-group">
+                <input type="text" class="form-control input-sm" name='account' placeholder="请输入账号名称，支持逗号和空格多个搜索" size="40">
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary btn-embossed "><i class="fa fa-search"></i> {:__('搜索')}</button>
+        </form>
+        </div>
+        <table id="table" class="table table-bordered table-hover" width="100%">
+            <thead>
+            <tr>
+                <th class="text-center">公司</th>
+                <th class="text-center">平台</th>
+                <th class="text-center">账号</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach $company_account_list as $value}
+            <tr>
+                <td class="text-center">
+                    {$company_info['company_name']}
+                </td>
+                <td class="text-center">{$value['platform']}</td>
+                <td class="text-center">{$value['account']}</td>
+            </tr>
+            {/foreach}
+            </tbody>
+        </table>
+    </section>
+{/block}

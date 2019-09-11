@@ -1,0 +1,55 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+<section class="content">
+    <div class="box-body">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+            <tr>
+                <th class="text-center">余额名称</th>
+                <th class="text-center">账户余额</th>
+                <th class="text-center">转入待确认</th>
+                <th class="text-center">转出待确认</th>
+                <th class="text-center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {if $funds}
+            {foreach $funds as $val}
+            <tr>
+                <td class="text-center">{$val.fund_name}</td>
+                <td class="text-center">{$val.account_funds} {$val.account_currency}</td>
+                <td class="text-center">{$val.into_confirm} {$val.account_currency}</td>
+                <td class="text-center">{$val.out_confirm} {$val.account_currency}</td>
+                <td class="text-center">
+                    <!--<a href="{:url('/index/funds/bank/flowDetail', ['fund_id' => $val['id']])}" class="btn btn-default btn-xs"><i class="fa fa-retweet"></i> {:__('流水明细')}</a>-->
+                    <!--<br>-->
+                    <div class="btn-group">
+                        <button class="btn btn-warning btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -- 操作 -- <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" style="min-width:100px;">
+                            <li><a href="#" class="btn-dialog"
+                                   title="{:__('提现')}"
+                                   data-url="{:url('/index/funds/store/withdraw', ['fund_id' => $val.id])}">
+                                <i class="fa fa-dollar"></i> {:__('提现')}</a>
+                            </li>
+                            <li><a href="#" class="btn-dialog"
+                                   title="{:__('平帐')}"
+                                   data-url="{:url('/index/funds/store/fix', ['fund_id' => $val.id])}">
+                                <i class="fa fa-gg"></i> {:__('平帐')}</a>
+                            </li>
+                            <li><a href="#" class="btn-dialog"
+                                   title="{:__('差异')}"
+                                   data-url="{:url('/index/funds/index/difference', ['fund_id' => $val.id])}">
+                                <i class="fa fa-circle-o"></i> {:__('差异')}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            {/foreach}
+            {/if}
+            </tbody>
+        </table>
+    </div>
+</section>
+{/block}

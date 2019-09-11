@@ -1,0 +1,15 @@
+{extend name="layout/default" /}
+{block name='content'}
+<div class="container">
+    <!-- Content Header (Page header) -->
+    {include file="common/map" /}
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-solid">
+            <div class="box-body">
+                {include file="funds/index/confirm_table" /}
+            </div>
+        </div>
+    </section>
+</div>
+{/block}

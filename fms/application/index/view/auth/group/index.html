@@ -1,0 +1,75 @@
+{extend name="layout/default" /}
+{block name='content'}
+<div class="container">
+    {include file="common/map" /}
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-default color-palette-box">
+            <div class="box-header with-border">
+                <button type="button" class="btn btn-sm btn-refresh"><i class="fa fa-refresh"></i></button>
+                {if $auth->check('index/auth/group/add')}
+                <button type="button" class="btn bg-purple btn-sm btn-dialog"
+                        options="{area:['500px','400px']}"
+                        href="{:url('/index/auth/group/add')}" title="{:__('添加菜单')}"><i class="fa fa-plus-circle"></i> {:__('添加角色')}
+                </button>
+                {/if}
+            </div>
+
+            <div class="box-body">
+                <table id="table" class="table table-bordered table-hover" width="100%">
+                    <head>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th>标题</th>
+                            <th>状态</th>
+                            <th class="text-center">操作</th>
+                        </tr>
+                    </head>
+                    <tbody>
+                    {foreach $lists as $val}
+                    <tr>
+                        <td class="text-center">{$val.id}</td>
+                        <td>{$val.name}</td>
+                        <td>
+                            {if $val.status == 1}
+                            <span class="text-success"><i class="fa fa-circle"></i> 正常</span>
+                            {else}
+                            <span class="text-danger"><i class="fa fa-circle"></i> 禁用</span>
+                            {/if}
+                        </td>
+                        <td class="text-center">
+                            {if $auth->check('index/auth/group/edit') && $val.rules != '*'}
+                            <button type="button"
+                                    class="btn btn-success btn-edit btn-dialog btn-xs"
+                                    title="{:__('编辑')}"
+                                    options="{area:['500px','400px']}"
+                                    href="{:url('/index/auth/group/edit', [$val.id])}"><i class="fa fa-pencil"></i> {:__('编辑')}
+                            </button>
+                            {/if}
+                            {if $auth->check('index/auth/group/roletree') && $val.rules != '*'}
+                            <button type="button"
+                                    class="btn btn-warning btn-edit btn-dialog btn-xs"
+                                    title="{:__('权限')}"
+                                    options="{area:['1000px','600px']}"
+                                    href="{:url('/index/auth/group/roletree', ['id' => $val.id, 'pid' => $val.pid])}"><i class="fa fa-paw"></i> {:__('权限')}
+                            </button>
+                            {/if}
+                            {if $auth->check('index/auth/group/del') && $val.rules != '*'}
+                            <button type="button"
+                                    class="btn btn-danger btn-edit btn-ajax btn-xs"
+                                    options="{confirm:'确定要删除此项吗？'}"
+                                    title="{:__('删除')}"
+                                    href="{:url('/index/auth/group/del', [$val.id])}"><i class="fa fa-trash"></i> {:__('删除')}
+                            </button>
+                            {/if}
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+{/block}

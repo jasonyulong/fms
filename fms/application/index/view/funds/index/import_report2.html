@@ -1,0 +1,23 @@
+导入完成. <br/>成功导入: <span class='text-success'>{$success_num}</span> 条,导入失败: <span class='text-danger'>{:count($fail_arr)}</span> 条
+<table class='table table-bordered table-hover table-striped'>
+    <thead>
+    <tr>
+        {foreach $column_arr as $value}
+        <td>{$value}</td>
+        {/foreach}
+        <td>失败原因</td>
+    </tr>
+    </thead>
+    <tbody>
+    {if $fail_arr}
+    {foreach $fail_arr as $val}
+    <tr>
+        {foreach $index_arr as $v}
+        <td>{$val['row_data'][$v] ?? ''}</td>
+        {/foreach}
+        <td>{$val.msg}</td>
+    </tr>
+    {/foreach}
+    {/if}
+    </tbody>
+</table>

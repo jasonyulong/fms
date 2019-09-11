@@ -1,0 +1,35 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+<form class="form-horizontal content dialog-form" role="form" data-toggle="validator" method="POST" action="">
+    <div class="form-group form-inline">
+        <input type="hidden" name="funds_id" value="{$rows.id}">
+        <input type="hidden" name="account_id" value="{$rows.account_id}">
+        <label class="col-sm-3 control-label">{:__('收款金额')}:</label>
+        <div class="col-sm-9">
+            <span>{$rows.account_currency}</span>
+            <input type="text" class="form-control input-sm" name="amount" style="width:120px;" data-rule="required">
+        </div>
+    </div>
+    <!--<div class="form-group form-inline">-->
+        <!--<label class="col-sm-3 control-label">{:__('手续费')}:</label>-->
+        <!--<div class="col-sm-9">-->
+            <!--<input type="text" class="form-control input-sm balance" name="fee" value="0" style="width:60px;">-->
+            <!--<span>{$rows.account_currency}</span>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="form-group form-inline">
+        <label class="col-sm-3 control-label">{:__('收款原因')}:</label>
+        <div class="col-sm-7">
+            <textarea name="remarks" class="form-control" rows="3" data-rule="required" style="width: 100%;"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label"></label>
+        <div class="col-sm-8">
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">{:__('提交')}</button>
+            </span>
+        </div>
+    </div>
+</form>
+{/block}

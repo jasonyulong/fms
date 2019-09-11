@@ -1,0 +1,45 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+
+<form class="form-inline content" method="POST" id="default_form">
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('设置提款费率')}</label>
+        <!-- 多选 -->
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="out_rate">
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label"></label>
+        <div class="col-sm-10">
+    
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-success">{:__('提交')}</button>
+            </span>
+        </div>
+    </div>
+</form>
+
+{/block}
+
+{block name='js'}
+<script>
+// 阻止默认的提交行为，使用自定义的提交方法
+    $('#default_form').submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serializeArray(),
+            dataType: 'JSON',
+            success: function(ret) {
+                if (ret.code != 0) parent.layer.alert(ret.msg);
+                else parent.layer.alert(ret.msg, {'yes': function() {parent.location.reload();}});
+            }
+        })
+    });
+</script>
+
+{/block}

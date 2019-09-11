@@ -1,0 +1,29 @@
+<div class="block pagination clearfix" id="pagination">
+    <div class="pagination left">
+        <span class="pagination-info">总共找到 <strong class="text-danger">{$list_total}</strong> 条记录</span>
+        <!-- <span class="page-list">每页显示 <span class="btn-group dropup">
+                <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="page-size">{$params['ps']}</span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a href="{$current_url}&ps=20&p=1">20</a></li>
+                    <li role="menuitem"><a href="{$current_url}&ps=50&p=1">50</a></li>
+                    <li role="menuitem"><a href="{$current_url}&ps=100&p=1">100</a></li>
+                    <li role="menuitem"><a href="{$current_url}&ps=200&p=1">200</a></li>
+                    <li role="menuitem"><a href="{$current_url}&ps=300&p=1">300</a></li>
+                </ul>
+        </span> 条记录</span> -->
+    </div>
+    <ul class="pagination right">
+        <li class="page-pre"><a href="{$current_url}&p={$last_page}">上一页</a></li>
+        {foreach $all_page_num as $page_list}
+        <li class="page-number {if $params.p eq $page_list}active{/if}"><a href="{$current_url}&p={$page_list}">{$page_list}</a></li>
+        {/foreach}
+        <li class="page-next"><a href="{$current_url}&p={$next_page}">下一页</a></li>
+    </ul>
+</div>
+
+
+
+
+

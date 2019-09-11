@@ -1,0 +1,43 @@
+<div class="box-header with-border">
+    共有 <span class="text-danger">{$total}</span> 条记录
+</div>
+
+<table id="table" class="table table-bordered table-hover" width="100%">
+    <thead>
+    <tr>
+        <th class="text-center">流水号</th>
+        <th>转出账户</th>
+        <th>收款账户</th>
+        <th>待确认金额</th>
+        <th>转账人/时间</th>
+        <th>滞留时间</th>
+        <th>备注</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {foreach $rows as $val}
+    <tr>
+        <td class="text-center">{$val.number}</td>
+        <td>
+            {$val.from_account}
+        </td>
+        <td>
+            {$val.to_account}
+        </td>
+        <td class="text-danger">{$val.amount - $val.fees} <small>{$val.account_currency}</small></td>
+        <td><small>{$val.createuser}</small> <br> <small>{$val.createtime|date='Y-m-d H:i:s',###}</small></td>
+        <td class="text-center text-primary">
+            {:datetimediff($val.createtime)}
+        </td>
+        <td>{$val.remarks}<span class="text-danger">{if $val['to_note']}<br>({$val['to_note']}){/if}</span></td>
+        <td class="text-center">
+            <button class="btn btn-info btn-xs" data-url="{:url('/index/funds/index/determine')}"
+            onclick="indexController.confirm_money({$val['id']} , $(this))"
+            data-title="{:__('确认到账')}"><i class="fa fa-gg"></i> {:__('确认到账')}</button>
+        </td>
+    </tr>
+    {/foreach}
+    </tbody>
+</table>
+{$page}

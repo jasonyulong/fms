@@ -1,0 +1,46 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-solid">
+
+                <table id="table" class="table table-bordered table-hover" width="100%">
+                    <thead>
+                    <tr>
+                        <th class="text-center">流水号</th>
+                        <th>交易金额</th>
+                        <th>确认金额</th>
+                        <th>差异金额</th>
+                        <th>创建人</th>
+                        <th>创建时间</th>
+                        <!-- <th>备注</th> -->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {if $rows.data}
+                    {foreach $rows.data as $val}
+                    <tr>
+                        <td class="text-center">{$val.number}</td>
+                        <td>
+                            {$val.amount} <small>{$val.currency}</small>
+                        </td>
+                        <td class="text-success">
+                            {$val.confim_amount} <small>{$val.currency}</small>
+                        </td>
+                        <td class="text-danger">
+                            {$val.diff_amount} <small>{$val.currency}</small>
+                        </td>
+                        <td>{$val.createuser}</td>
+                        <td>{$val.createtime|date='Y-m-d H:i:s',###}</td>
+                        <!-- <td>{$val.remarks}</td> -->
+                    </tr>
+                    {/foreach}
+                    {/if}
+                    </tbody>
+                </table>
+                {$page}
+        </div>
+    </section>
+
+{/block}

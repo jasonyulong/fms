@@ -1,0 +1,66 @@
+{extend name="layout/default" /}
+{block name='content'}
+<div class="container">
+    {include file="common/map" /}
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-default color-palette-box">
+            <div class="box-header with-border">
+                <button type="button" class="btn btn-sm btn-refresh"><i class="fa fa-refresh"></i></button>
+                <button type="button" class="btn bg-purple btn-sm btn-dialog"
+                        href="{:url('/index/company/index/add')}"
+                        title="{:__('添加公司')}"
+                        options="{area:['420px','350px']}"><i class="fa fa-plus-circle"></i> {:__('添加公司')}
+                </button>
+            </div>
+            <div class="box-body">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                    <th class="text-center">公司名称</th>
+                    {foreach $platform_list as $value}
+                    <th class="text-center">{$value}</th>
+                    {/foreach}
+                    <th class="text-center">操作</th>
+                    </thead>
+                    <tbody>
+                    {foreach $company_list as $company}
+                    <tr>
+                        <td class="text-center">{$company['company_name']}</td>
+                        {foreach $platform_list as $value}
+                        <td class="text-center">
+                            
+                            {if $company['platform_account_num'][$value] > 0}
+                            <button type="button" class="btn btn-link btn-sm btn-dialog" href="{:url('detail')}?company_id={$company['id']}&platform={$value}" title="{:__('查看公司')}"
+                                    options="{area:['800px','600px']}">{$company['platform_account_num'][$value]}
+                            </button>
+                            {else}
+                            {$company['platform_account_num'][$value]}
+                            {/if}
+                        </td>
+                        {/foreach}
+                        <td class="text-center">
+                            <button type="button" class="btn bg-purple btn-sm btn-dialog"
+                                href="{:url('/index/company/index/add', ['id' => $company['id']])}"
+                                title="{:__('编辑公司')}"
+                                options="{area:['420px','350px']}">{:__('编辑')}
+                            </button>
+                            <button type="button" class="btn bg-orange btn-sm btn-dialog"
+                                    href="{:url('detail')}?company_id={$company['id']}"
+                                    title="{:__('查看公司')}"
+                                    options="{area:['800px','600px']}">查看
+                            </button>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {include file="layout/page"}
+    </section>
+</div>
+{/block}
+{block name='js'}
+<script>
+</script>
+{/block}

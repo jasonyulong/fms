@@ -1,0 +1,146 @@
+{extend name="layout/default" /}
+{block name='content'}
+<div class="container">
+    {include file="common/map" /}
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-default color-palette-box">
+            <div class="box-header with-border">
+
+                <form action="" method="GET" class="form-inline" role="form">
+                    {if isset($params['fund_id'])}
+                    <input type="hidden" name="fund_id" value="{$params['fund_id']}">
+                    {/if}
+                    {if isset($params['account_id'])}
+                    <input type="hidden" name="account_id" value="{$params['account_id']}">
+                    {/if}
+                    <div class="input-group">
+                        {:__('转账日期')}
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="start_time" id="start_time" class="form-control " value="{$params['start_time'] ?? ''}" size="6" readonly>
+                    </div>
+                    <div class="input-group">
+                        {:__('到')}
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="end_time" id="end_time" class="form-control " value="{$params['end_time'] ?? ''}" size="6" readonly>
+                    </div>
+
+                    <div class="input-group">
+                        <select name="type" class="form-control">
+                            <option value="">全部</option>
+                            {foreach $fund_type as $key => $val}
+                            <option value="{$key}" {if ($params['type'] ?? '') == $key && ($params['type'] ?? '') !=''}selected{/if}>{$val}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select name="search_field" class="form-control">
+                            <option value="number" {if isset($params['search_field']) && $params['search_field'] == 'number'}selected{/if}>{:__('流水单号')}</option>
+                            <option value="from_account" {if isset($params['search_field']) && $params['search_field'] == 'from_account'}selected{/if}>{:__('账户')}</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="search_value" id="input" class="form-control" value="{$params['search_value'] ?? ''}" placeholder="{:__('请输入关键字')}">
+                    </div>
+                    <div class="input-group">
+                        <button type="submit" class="btn bg-orange "><i class="fa fa-search"></i> {:__('搜索')}</button>&nbsp;
+                        <button type="button" class="btn btn-primary is_explode"><i class="fa fa-sign-out"></i> {:__('导出')}</button>&nbsp;
+                    </div>
+                </form>
+            </div>
+
+            <div class="box-body">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th style="width:10px;"><input type="checkbox" class="data-check_box_total"></th>
+                        <th class="text-center">转账日期</th>
+                        <th class="text-center">操作类型</th>
+                        <th class="text-center">流水单号</th>
+                        <th class="text-center">状态</th>
+                        <th class="text-center">币种</th>
+                        <th class="text-center">收入</th>
+                        <th class="text-center">支出</th>
+                        <th class="text-center">余额</th>
+                        <th class="text-center">手续费 <a href="javascript:void(0);" data-toggle="tooltip" title="付款方实际支付的手续费"><i class="fa fa-fw fa-question-circle"></i></a></th>
+                        <th class="text-center">对方账户</th>
+                        <!-- <th class="text-center">到账金额 <a href="javascript:void(0);" data-toggle="tooltip" title="收款方实际到账金额"><i class="fa fa-fw fa-question-circle"></i></a></th> -->
+                        <th class="text-center">到账时间 <a href="javascript:void(0);" data-toggle="tooltip" title="收款方实际确认到账时间"><i class="fa fa-fw fa-question-circle"></i></a></th>
+                        <th class="text-center">操作人</th>
+                        <th class="text-center" style="width:120px;">备注</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {foreach $list as $v}
+                        <tr>
+                            <td style="width:10px;">
+                                <input type="checkbox" name="box_checked" class="data-check_box" data-id="{$v['id']}">
+                            </td>
+                            <td class="text-center">{:date('Y-m-d H:i:s', $v['createtime'])}</td>
+                            <td class="text-center">{$fund_type[$v['type']]}</td>
+                            <td class="text-center">{$v['number']}</td>
+                            <td class="text-center">{if $v['status'] == '1'}已确认{else /}待确认{/if}</td>
+                            <td class="text-center">
+                                {if $v['money_type'] == '收入'}
+                                    {$v.account_currency}
+                                {else /}
+                                    {$v.from_currency}
+                                {/if}
+                            </td>
+                            <td class="text-center">
+                                {if $v['money_type'] == '收入'}
+                                <span class="text-success">{if $v['amount'] > 0}+{/if}{$v['amount']}</span>
+                                {/if}
+                            </td>
+                            <td class="text-center">
+                                {if $v['money_type'] != '收入'}
+                                <span class="text-danger">{if $v['from_amount'] > 0}-{/if}{$v['from_amount']}</span>
+                                {/if}
+                            </td>
+                            <td class="text-center">
+                                {if $v['money_type'] == '收入'}
+                                    {$v.to_account_funds}
+                                {else /}
+                                    {$v.from_account_funds}
+                                {/if}
+                            </td>
+                            <td class="text-center">{if $v['money_type'] == '支出'}{$v['fees']}{/if}</td>
+                            <td class="text-center">
+                                {if isset($account_id) && $account_id == $v['from_account_id']}
+                                {$v['to_account']}
+                                {else /}
+                                {$v['from_account']}
+                                {/if}
+                            </td>
+                            <!-- <td class="text-center text-info">{$v['confirm_amount']} {$v.account_currency}</td> -->
+                            <td class="text-center small">
+                                {if $v['confirmtime']}{:date('Y-m-d H:i:s', $v['confirmtime'])}{/if}
+                                {if $v['confirmtime']}<br/><i class="fa fa-clock-o"></i> {:datetimediff($v['createtime'], $v['confirmtime'])}{/if}
+                            </td>
+                            <td class="text-center">
+                                {$v.createuser}
+                            </td>
+                            <td class="text-center" onclick="indexController.show_full_remark($(this))" data-remark="{$v['remarks']}">{:mb_substr($v['remarks'], 0, 32)}
+                            <span class="text-danger">{if $v['to_note']}<br>({$v['to_note']}){/if}</span>
+                            </td>
+                        </tr>
+                        {/foreach}
+                    </tbody>
+                </table>
+                {$page}
+            </div>
+        </div>
+    </section>
+</div>
+{/block}
+{block name='js'}
+<script>
+    $(function () {
+        laydate.render({elem: '#start_time', type: 'date', max: 1});
+        laydate.render({elem: '#end_time', type: 'date', max: 1});
+    });
+    fms.init_check_all();
+</script>
+{/block}

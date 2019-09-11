@@ -1,0 +1,180 @@
+{extend name="layout/default" /}
+{block name='content'}
+<div class="container">
+    {include file="common/map" /}
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-default color-palette-box">
+            <div class="box-header with-border">
+                <form action="" method="get" class="form-inline" role="form">
+                    <div class="input-group">
+                        <select name="account_type" class="form-control" title="{:__('类型')}" data-actions-box="true" data-live-search="true">
+                            <option value="">账户类型</option>
+                            {foreach $account_type as $k => $v}
+                            <option value="{$k}" {if isset($params['account_type']) && $params['account_type'] == $k}selected{/if}>{$v}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select name="company_id[]" class="form-control selectpicker" title="{:__('公司')}" data-actions-box="true"
+                                data-live-search="true" data-select-all-text="{:__('全选')}" data-deselect-all-text="{:__('全不选')}"
+                                multiple>
+                            {foreach $all_company as $value}
+                            <option value="{$value['id']}" {if isset($params['company_id']) && in_array($value['id'], $params['company_id'])}selected{/if}>{$value['company_name']}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <select name="type_attr" class="form-control selectpicker" title="{:__('账户属性')}" >
+                            {foreach $third_type_attr as $k => $v}
+                            <option value="{$k}" {if isset($params['type_attr']) && $params['type_attr'] == $k}selected{/if}>{$v}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <select name="type_scene" class="form-control selectpicker" title="{:__('使用类型')}" >
+                            {foreach $type_scene as $k => $v}
+                            <option value="{$k}" {if isset($params['type_scene']) && $params['type_scene'] == $k}selected{/if}>{$v}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select name="admin_id[]" class="form-control selectpicker" title="{:__('账号操作员')}" data-actions-box="true"
+                                data-live-search="true" data-select-all-text="{:__('全选')}" data-deselect-all-text="{:__('全不选')}"
+                                multiple>
+                            {foreach $admin_list as $value}
+                            <option value="{$value['id']}" {if isset($params['admin_id']) && in_array($value['id'], $params['admin_id'])}selected{/if}>{$value['username']}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select name="status" class="form-control" title="{:__('状态')}" data-actions-box="true" data-live-search="true">
+                            <option value="">状态</option>
+                            <option value="0" {if isset($params['status']) && $params['status'] == '0'}selected{/if}>{:__('注销')}</option>
+                            <option value="1" {if isset($params['status']) && $params['status'] == '1'}selected{/if}>{:__('正常')}</option>
+                            <option value="2" {if isset($params['status']) && $params['status'] == '2'}selected{/if}>{:__('冻结')}</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select name="search_field" class="form-control" title="">
+                            <option value="title" {if isset($params['search_field']) && $params['search_field'] == 'title'}selected{/if}>{:__('账户名称')}</option>
+                            <option value="account" {if isset($params['search_field']) && $params['search_field'] == 'account'}selected{/if}>{:__('账户')}</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="search_value" id="input" class="form-control" placeholder="{:__('请输入关键字')}" value="{$params['search_value'] ?? ''}">
+                    </div>
+                    <div class="input-group">
+                        <button type="submit" class="btn bg-orange"><i class="fa fa-search"></i> {:__('搜索')}</button>&nbsp;
+                        <button type="button" class="btn bg-purple btn-dialog" href="{:url('add')}" title="{:__('新增账户')}" options="{area:['800px','600px']}"><i class="fa fa-plus-circle"></i>
+                            {:__('新增账户')}
+                        </button>
+                    </div>
+                    <div class="input-group">
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="true">
+                                批量操作
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="javascript:void(0)"
+                                       data-url="{:url('updateAccountAdmin')}"
+                                       onclick="indexController.update_account_admin(0, $(this))"
+                                       data-title="{:__('修改账号管理员')}">{:__('修改账号管理员')}</a></li>
+
+                                <li><a href="javascript:void(0)"
+                                       data-url="{:url('updateOutRate')}"
+                                       onclick="indexController.update_out_rate(0, $(this))"
+                                       data-title="{:__('设置提款费率')}">{:__('设置提款费率')}</a></li>
+
+                                <li><a href="javascript:void(0)"
+                                       data-url="{:url('updateAccountStatus')}"
+                                       onclick="indexController.update_account_status(0, $(this))"
+                                       data-title="{:__('修改状态')}">{:__('修改状态')}</a></li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="box-body">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th style="width:10px;"><input type="checkbox" class="data-check_box_total"></th>
+                        <th class="text-center">账户名称</th>
+                        <th class="text-center">账户</th>
+                        <th class="text-center">账户类型</th>
+                        <th class="text-center">提款费率</th>
+                        <th class="text-center">交易费率</th>
+                        <th class="text-center">使用类型</th>
+                        <th class="text-center">账号管理员</th>
+                        <th class="text-center">创建日期</th>
+                        <th class="text-center">更新时间</th>
+                        <th class="text-center">状态</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $account_list as $v}
+                    <tr>
+                        <td style="width:10px;">
+                            <input type="checkbox" name="box_checked" class="data-check_box" data-id="{$v['id']}">
+                        </td>
+                        <td class="text-center">{$v['title']}</td>
+                        <td class="text-center">{$v['account']}</td>
+                        <td class="text-center small">
+                            {$account_type[$v['type']]} <br />
+                            {if $v.type == 1}
+                            <span class="text-success">{$platforms[$v['type_attr']] ?? ''}</span>
+                            {elseif $v.type == 2}
+                            <span class="text-danger">{$third_type_attr[$v['type_attr']] ?? ''}</span>
+                            {elseif $v.type == 3}
+                            <span class="text-info">{$third_type_attr[$v['type_attr']] ?? $v.bank_name}</span>
+                            {/if}
+                        </td>
+                        <td class="text-center">{$v.out_rate * 100} %</td>
+                        <td class="text-center">{$v.fixed_rate * 100} %</td>
+                        <td class="text-center">{$type_scene[$v['type_scene']] ?? ''}</td>
+                        <td class="text-center">{$v['admins']}</td>
+                        <td class="text-center small">{:date('Y-m-d H:i:s', $v['createtime'])} <br> {$v.createuser}</td>
+                        <td class="text-center small">{:date('Y-m-d H:i:s', $v['createtime'])}</td>
+                        <td class="text-center">
+                            {if $v.status == 1}
+                            <span class="text-success"><i class="fa fa-circle"></i> {$account_status[$v['status']]}</span>
+                            {else}
+                            <span class="text-danger"><i class="fa fa-circle"></i> {$account_status[$v['status']]}</span>
+                            {/if}
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-success btn-xs btn-dialog"
+                                    href="{:url('edit', ['id' => $v['id']], '')}"
+                                    title="{:__('编辑账户')}"
+                                    options="{area:['800px','600px']}"><i class="fa fa-pencil"></i> 编辑
+                            </button>
+                            <button class="btn btn-warning btn-xs" data-url="{:url('updateAccountAdmin')}"
+                                    onclick="indexController.update_account_admin({$v['id']} , $(this))"
+                                    data-title="{:__('修改账号管理员')}"><i class="fa fa-pencil"></i> {:__('修改管理员')}
+                            </button>
+                            <!--<button class="btn btn-primary btn-xs">备注</button>-->
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {include file="layout/page"}
+    </section>
+
+</div>
+{/block}
+{block name='js'}
+<script>
+    fms.init_check_all();
+</script>
+{/block}

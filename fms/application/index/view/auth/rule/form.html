@@ -1,0 +1,71 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+<form id="add-form" class="form-horizontal dialog-form" role="form" data-toggle="validator" method="POST" action="">
+    <div class="container">
+        <section class="content">
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2">{:__('父级')}:</label>
+                <div class="col-xs-12 col-sm-8">
+                    {:build_select('row[pid]', $ruledata, $row.pid ?? 0, ['class'=>'form-control', 'required'=>''])}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="name" class="control-label col-xs-12 col-sm-2">{:__('标题')}:</label>
+                <div class="col-xs-12 col-sm-8">
+                    <input type="text" class="form-control" id="title" name="row[title]"
+                           data-placeholder-node="{:__('Node tips')}"
+                           data-placeholder-menu="{:__('Menu tips')}"
+                           value="{$row.title ?? ''}"
+                           data-rule="required"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="icon" class="control-label col-xs-12 col-sm-2">{:__('图标')}:</label>
+                <div class="col-xs-12 col-sm-8">
+                    <div class="input-group input-groupp-md">
+                        <input type="text" class="form-control" id="icon" name="row[icon]" value="{$row.icon ?? 'fa fa-circle-o'}"/>
+                        <a href="javascript:;" class="btn-search-icon input-group-addon">{:__('Search icon')}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="weigh" class="control-label col-xs-12 col-sm-2">{:__('权重')}:</label>
+                <div class="col-xs-12 col-sm-8">
+                    <input type="text" class="form-control" id="weigh" name="row[weigh]" value="{$row.weigh ?? '0'}" data-rule="required"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="remark" class="control-label col-xs-12 col-sm-2">{:__('请求地址')}:</label>
+                <div class="col-xs-12 col-sm-8">
+                    <textarea class="form-control" id="name" name="row[name]">{$row.name ?? ''}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="remark" class="control-label col-xs-12 col-sm-2">{:__('备注')}:</label>
+                <div class="col-xs-12 col-sm-8">
+                    <textarea class="form-control" id="remark" name="row[remark]">{$row.remark ?? ''}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2">{:__('状态')}:</label>
+                <div class="col-xs-12 col-sm-8">
+                    {:build_radios('row[status]', ['禁用', '启用'], $row.status ?? 0)}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2">{:__('是否菜单')}:</label>
+                <div class="col-xs-12 col-sm-8">
+                    {:build_radios('row[ismenu]', ['1'=>__('是'), '0'=>__('否')], $row.ismenu ?? 1)}
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class=" layer-footer">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed ">{:__('确定提交')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('重置')}</button>
+        </div>
+    </div>
+</form>
+{/block}

@@ -1,0 +1,92 @@
+{extend name="layout/default" /}
+{block name='content'}
+<div class="container">
+    {include file="common/map" /}
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-default color-palette-box">
+            <div class="box-header with-border">
+                <button type="button" class="btn btn-sm btn-refresh"><i class="fa fa-refresh"></i></button>
+                {if $auth->check('index/auth/admin/add')}
+                <button type="button" class="btn bg-purple btn-sm btn-dialog"
+                        href="{:url('/index/auth/admin/add')}" title="{:__('添加管理员')}"><i class="fa fa-plus-circle"></i> {:__('添加管理员')}
+                </button>
+                {/if}
+            </div>
+
+            <div class="box-body">
+                <table id="table" class="table table-bordered table-hover" width="100%">
+                    <head>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th>角色</th>
+                            <th>姓名</th>
+                            <th>职务</th>
+                            <th>手机号码</th>
+                            <th>邮箱</th>
+                            <th>最后登录时间</th>
+                            <th>最后登录IP</th>
+                            <th class="text-center">登录状态</th>
+                            <th class="text-center">启用状态</th>
+                            <th class="text-center">操作</th>
+                        </tr>
+                    </head>
+                    <tbody>
+                    {foreach $rows as $val}
+                    <tr>
+                        <td class="text-center">{$val.id}</td>
+                        <td>
+                            {if $val.groups == 1}
+                            <span class="text-danger">{$val.groups_text}</span>
+                            {else}
+                            {$val.groups_text}
+                            {/if}
+                        </td>
+                        <td>{$val.username}</td>
+                        <td>{$val.position|default='--'}</td>
+                        <td>{$val.mobile|default='--'}</td>
+                        <td>{$val.email|default='--'}</td>
+                        <td>{$val.logintime|date='Y-m-d H:i:s',###}</td>
+                        <td>{$val.loginip|default='--'}</td>
+                        <td class="text-center">
+                            {if empty($val.token) || !check_logintoken($val.keeplogin, $val.token)}
+                            <span class="text-gray"><i class="fa fa-circle"></i> 下线 </span>
+                            {else}
+                            <span class="text-success" title="登录IP：{$val.loginip}"><i class="fa fa-circle"></i> 在线 </span>
+                            {/if}
+                        </td>
+                        <td class="text-center">
+                            {if $val.status == 1}
+                            <span class="text-primary">启用</span>
+                            {else}
+                            <span class="text-danger">{$adminStatus[$val.status]}</span>
+                            {/if}
+                        </td>
+                        <td class="text-center">
+                            {if $auth->check('index/auth/admin/edit')}
+                            <button type="button"
+                                    class="btn btn-success btn-edit btn-dialog btn-xs"
+                                    title="{:__('编辑')}"
+                                    href="{:url('/index/auth/admin/edit', [$val.id])}"><i class="fa fa-pencil"></i> {:__('编辑')}
+                            </button>
+                            {/if}
+                            {if $auth->check('index/auth/admin/del') && $val.id != 1}
+                            <button type="button"
+                                    class="btn btn-danger btn-edit btn-ajax btn-xs"
+                                    options="{confirm:'确定要删除此项吗？'}"
+                                    title="{:__('删除')}"
+                                    href="{:url('/index/auth/admin/del', [$val.id])}"><i class="fa fa-trash"></i> {:__('删除')}
+                            </button>
+                            {/if}
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                {$page}
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+{/block}

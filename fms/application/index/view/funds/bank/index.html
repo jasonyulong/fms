@@ -1,0 +1,178 @@
+{extend name="layout/default" /}
+{block name='content'}
+<div class="container">
+    {include file="common/map" /}
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-default color-palette-box">
+            <div class="box-header with-border">
+
+                <form action="" method="GET" class="form-inline" role="form">
+                    <div class="input-group">
+                        <select name="company_id[]" class="form-control selectpicker" title="{:__('公司')}" data-actions-box="false" multiple>
+                            {foreach $all_company as $value}
+                            <option value="{$value['id']}" {if isset($params['company_id']) && in_array($value['id'], $params['company_id'])}selected{/if}>{$value['company_name']}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select name="admin_id[]" class="form-control selectpicker" title="{:__('操作员')}" data-actions-box="true"
+                                data-live-search="true" data-select-all-text="{:__('全选')}" data-deselect-all-text="{:__('全不选')}"
+                                multiple>
+                            {foreach $admin_list as $value}
+                            <option value="{$value['id']}" {if isset($params['admin_id']) && in_array($value['id'], $params['admin_id'])}selected{/if}>{$value['username']}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select name="type_scene" class="form-control" title="{:__('使用类型')}" data-actions-box="true"
+                                data-live-search="true" >
+                            <option value="">使用类型</option>
+                            {foreach $type_scene as $k => $v}
+                            <option value="{$k}" {if isset($params['type_scene']) && $params['type_scene'] == $k}selected{/if}>{$v}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select name="currency_type[]" class="form-control selectpicker" title="{:__('币种')}" data-actions-box="false" multiple>
+                            {foreach $all_currency_type as $value}
+                            <option value="{$value}" {if isset($params['currency_type']) && in_array($value, $params['currency_type'])}selected{/if}>{$value}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        {:__('余额')}
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="funds_start" class="form-control " value="{$params['funds_start'] ?? ''}" size="6">
+                    </div>
+                    <div class="input-group">
+                        {:__('到')}
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="funds_end" class="form-control " value="{$params['funds_end'] ?? ''}" size="6">
+                    </div>
+                    <div class="input-group">
+                        {:__('账户名称')}
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="account_name" id="input" class="form-control" value="{$params['account_name'] ?? ''}" placeholder="{:__('请输入关键字')}">
+                    </div>
+                    <div class="input-group">
+                        <button type="submit" class="btn bg-orange "><i class="fa fa-search"></i>  {:__('搜索')}</button>&nbsp;
+                    </div>
+                    <div class="input-group">
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="true">
+                                批量操作
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="javascript:void(0)" data-url="{:url('/index/funds/store/withdraw')}" onclick="indexController.withdraw_money(0, $(this))" data-title="{:__('提现')}">{:__('提现')}</a></li>
+                                <li><a href="javascript:void(0)" data-url="{:url('/index/funds/store/fix')}" onclick="indexController.fix_money(0, $(this))" data-title="{:__('平账')}">{:__('平账')}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <button type="button" class="btn btn-success" onclick="indexController.import_flow_detail($(this))" data-url="{:url('/index/funds/index/importBankDetail')}" data-title="{:__('流水导入')}"> {:__('流水导入')}</button>
+                    </div>
+                    <div class="input-group">
+                        <a href="{:url('', '', '')}?is_export=1" class="btn btn-primary"> {:__('导出余额')}</a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="box-body">
+                <table class="table table-bordered table-hover table-striped" >
+                    <thead>
+                    <tr>
+                        <th style="width:10px;"><input type="checkbox" class="data-check_box_total"></th>
+                        <th class="text-center">账户名称</th>
+                        <th class="text-center">账户</th>
+                        <th class="text-center">账户类型</th>
+                        <th class="text-center">使用类型</th>
+                        <th class="text-center">账户币种</th>
+                        <th class="text-center">转入待确认金额</th>
+                        <th class="text-center">转出待确认金额</th>
+                        <th class="text-center">账户余额</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $list as $value}
+                    <tr>
+                        <td style="width:10px;">
+                            <input type="checkbox" name="box_checked" class="data-check_box" data-id="{$value['f_id']}" >
+                        </td>
+                        <td class="text-center">{$value['title']}</td>
+                        <td class="text-center">{$value['account']}<br><small>{$value['fund_name']}</small></td>
+                        <td class="text-center">
+                            {$third_type_attr[$value['platform']] ?? $value.bank_name}
+                        </td>
+                        <td class="text-center">{$type_scene[$value['type_scene']]}</td>
+                        <td class="text-center">{$value['account_currency']}</td>
+                        <td class="text-center text-success">{$value['into_confirm']} <small>{$value.account_currency}</small></td>
+                        <td class="text-center text-danger">{$value['out_confirm']} <small>{$value.account_currency}</small></td>
+                        <td class="text-center">{$value['account_funds']} <small>{$value.account_currency}</small></td>
+                        <td class="text-center">
+                            <a href="{:url('/index/funds/bank/flowDetail', ['fund_id' => $value['f_id']])}" class="btn btn-default btn-xs"><i class="fa fa-retweet"></i> {:__('流水明细')}</a>
+                            <br>
+                            <div class="btn-group" style="margin-top:5px;">
+                                <button class="btn btn-warning btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -- 操作 -- <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" style="min-width:100px;">
+                                    <li><a href="#" class="btn-dialog"
+                                           title="{:__('转账')}"
+                                           data-url="{:url('/index/funds/store/transfer', ['fund_id' => $value.f_id])}">
+                                        <i class="fa fa-money"></i> {:__('转账')}</a>
+                                    </li>
+                                    <li><a href="#" class="btn-dialog"
+                                           title="{:__('收款')}"
+                                           options="{area:['500px','400px']}"
+                                           data-url="{:url('/index/funds/store/receipt', ['fund_id' => $value.f_id])}">
+                                        <i class="fa fa-sign-in"></i> {:__('收款')}</a>
+                                    </li>
+                                    <li><a href="#" class="btn-dialog"
+                                           title="{:__('提现')}"
+                                           data-url="{:url('/index/funds/store/withdraw', ['fund_id' => $value.f_id])}">
+                                        <i class="fa fa-credit-card"></i> {:__('提现')}</a>
+                                    </li>
+                                    <li><a href="#" class="btn-dialog"
+                                           title="{:__('平账')}"
+                                           data-url="{:url('/index/funds/store/fix', ['fund_id' => $value.f_id])}">
+                                        <i class="fa fa-gg"></i> {:__('平账')}</a>
+                                    </li>
+                                    <li><a href="#" class="btn-dialog"
+                                        title="{:__('HL')}"
+                                        data-url="{:url('/index/funds/store/exchangeMoney', ['fund_id' => $value.f_id])}">
+                                     <i class="fa fa-fw fa-usd"></i> {:__('HL')}</a>
+                                 </li>
+                                    <li><a href="#" class="btn-dialog"
+                                           title="{:__('差异')}"
+                                           data-url="{:url('/index/funds/index/difference', ['fund_id' => $value.f_id])}">
+                                        <i class="fa fa-circle-o"></i> {:__('差异')}</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                {$page}
+            </div>
+        </div>
+    </section>
+</div>
+{/block}
+{block name='js'}
+<script>
+    $(function() {
+        laydate.render({elem: '#start_time', type: 'date', max: 1});
+        laydate.render({elem: '#end_time', type: 'date', max: 1});
+    });
+    fms.init_check_all();
+</script>
+{/block}

@@ -1,0 +1,136 @@
+{extend name="layout/default" /}
+{block name='content'}
+<div class="container">
+    {include file="common/map" /}
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-default color-palette-box">
+            <div class="box-header with-border">
+
+                <form action="" method="GET" class="form-inline" role="form">
+                    <div class="input-group">
+                        <select name="account_ids[]" class="form-control selectpicker" title="{:__('账户名称')}" data-actions-box="false" multiple>
+                            {foreach $all_bank_accounts as $value}
+                            <option value="{$value['id']}" {if isset($params['account_ids']) && in_array($value['id'], $params['account_ids'])}selected{/if}>{$value['title']}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <select name="currency_type[]" class="form-control selectpicker" title="{:__('币种')}" data-actions-box="false" multiple>
+                            {foreach $all_currency_type as $value}
+                            <option value="{$value}" {if isset($params['currency_type']) && in_array($value, $params['currency_type'])}selected{/if}>{$value}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <select name="admin_id[]" class="form-control selectpicker" title="{:__('操作员')}" data-actions-box="true"
+                                data-live-search="true" data-select-all-text="{:__('全选')}" data-deselect-all-text="{:__('全不选')}"
+                                multiple>
+                            {foreach $admin_list as $value}
+                            <option value="{$value['id']}" {if isset($params['admin_id']) && in_array($value['id'], $params['admin_id'])}selected{/if}>{$value['username']}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <!-- <div class="input-group">
+                        <select name="type_scene" class="form-control" title="{:__('使用类型')}" data-actions-box="true"
+                                data-live-search="true" >
+                            <option value="">全部</option>
+                            {foreach $type_scene as $k => $v}
+                            <option value="{$k}" {if isset($params['type_scene']) && $params['type_scene'] == $k}selected{/if}>{$v}</option>
+                            {/foreach}
+                        </select>
+                    </div> -->
+
+                    <!-- 账户类型 -->
+                    <div class="input-group">
+                        <select name="account_type[]" class="form-control selectpicker" title="{:__('账户类型')}" data-actions-box="false" multiple>
+                            {foreach $all_types as $value}
+                            <option value="{$value}" {if isset($params['account_type']) && in_array($value, $params['account_type'])}selected{/if}>{$value}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        {:__('选择日期')}
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="start_time" id="start_time" class="form-control " value="{$params['start_time'] ?? ''}" size="8" readonly>
+                    </div>
+                    <div class="input-group">
+                            {:__('到')}
+                        </div>
+                    <div class="input-group">
+                        <input type="text" name="end_time" id="end_time" class="form-control " value="{$params['end_time'] ?? ''}" size="8" readonly>
+                    </div>
+                    <div class="input-group">
+                        {:__('账户名称')}
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="account_name" id="input" class="form-control" value="{$params['account_name'] ?? ''}" placeholder="{:__('请输入关键字')}">
+                    </div>
+                    <div class="input-group">
+                        <button type="submit" class="btn bg-orange "><i class="fa fa-search"></i>  {:__('搜索')}</button>&nbsp;
+                    </div>
+                </form>
+            </div>
+
+            <div class="box-body">
+                <table class="table table-bordered table-hover table-striped" >
+                    <thead>
+                        <tr class="total-tr">
+                            <th class="text-center">合计</th>
+                            <th class="text-center"></th>
+                            <th class="text-center"></th>
+                            <th class="text-center">CNY</th>
+                            <th class="text-center">{$total_income}</th>
+                            <th class="text-center">{$total_expend}</th>
+                            <th class="text-center">{$total_balance}</th>
+                            <th class="text-center"></th>
+                        </tr>
+
+                    <tr>
+                        <th class="text-center">账户名称</th>
+                        <th class="text-center">账户</th>
+                        <th class="text-center">账户类型</th>
+                        <th class="text-center">币种</th>
+                        <th class="text-center">收入</th>
+                        <th class="text-center">支出</th>
+                        <th class="text-center">当前余额</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $list as $value}
+                    <tr>
+                        <td class="text-center">{$value['title']}</td>
+                        <td class="text-center">{$value['account']}<br><small>{$value['fund_name']}</small></td>
+                        <td class="text-center">
+                            {$third_type_attr[$value['platform']] ?? $value.bank_name}
+                        </td>
+                        <td class="text-center">{$value['account_currency']}</td>
+                        <td class="text-center text-success">{$value['income']} <small></small></td>
+                        <td class="text-center text-danger">{$value['expend']} <small></small></td>
+                        <td class="text-center">{$value['balance']} <small></small></td>
+                        <td class="text-center">
+                            <a href="{:url('/index/funds/bank/flowDetail', ['fund_id' => $value['f_id']])}" class="btn btn-default btn-xs"><i class="fa fa-retweet"></i> {:__('流水明细')}</a>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                {$page}
+            </div>
+        </div>
+    </section>
+</div>
+{/block}
+{block name='js'}
+<script>
+    $(function() {
+        laydate.render({elem: '#start_time', type: 'date', max: 1});
+        laydate.render({elem: '#end_time', type: 'date', max: 1});
+    });
+    // fms.init_check_all();
+</script>
+{/block}

@@ -1,0 +1,243 @@
+{extend name="layout/dialog" /}
+
+{block name='css'}
+<style>
+    fieldset.scheduler-border {
+    border: 1px groove #ddd !important;
+    padding: 0 1.4em 1.4em 1.4em !important;
+    margin: 0 0 1.5em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+}
+
+    legend.scheduler-border {
+        font-size: 1.2em !important;
+        font-weight: bold !important;
+        text-align: left !important;
+        width:auto;
+        padding:0 10px;
+        border-bottom:none;
+    }
+    #default_form .row {
+        margin: 10px 0;
+    }
+    .danger-text {
+        color: red;
+    }
+</style>
+{/block}
+{block name='content'}
+<form class="form-horizontal content" method="POST" id="default_form">
+    <div class="form-group">
+        <!-- 多选 -->
+        <div class="col-sm-12">
+            <select name="transfer_type" class="form-control selectpicker" onchange="indexController.change_transfer_type($(this))">
+                <option value="1">{:__('对内转账')}</option>
+                <option value="2">{:__('对外转账')}</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-12">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">{:__('付款方')}</legend>
+                <div class="control-group">
+                    <div class="row">
+                        <label class="col-sm-2 control-label">{:__('账户名称')}</label>
+                        <div class="col-sm-8">
+                            <input type="hidden" name="title" id="title" value="{if isset($fund_info)}{$fund_info['id']}{/if}">
+                            <input type="text" class="form-control" value="{$account_info['title']}" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <label class="col-sm-2 control-label">{:__('余额账户')}</label>
+                        <div class="col-sm-8">
+                            {if $is_account}
+                            <select class="form-control selectpicker" title="{:__('请选择')}" onchange="indexController.change_fund($(this))">
+                                {foreach $fund_list as $v}
+                                <option value="{$v['id']}" data-currency="{$v['account_currency']}">{$v['fund_name']}</option>
+                                {/foreach}
+                            </select>
+                            {else /}
+                            <input type="text" name="account_name" id="account_name" class="form-control" value="{if isset($fund_info)}{$fund_info['fund_name']}{/if}" readonly>
+                            {/if}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-sm-2 control-label"><span class="danger-text">*</span>{:__('转账金额')}</label>
+                        <div class="col-sm-8 form-inline">
+                            <input type="text" name="money_amount" id="money_amount" class="form-control" onchange='indexController.change_transfer_money($(this))'>
+                            <span class="transation_currency">{if isset($fund_info)}{$fund_info['account_currency']}{/if}</span>
+                            <span class="danger-text">(转账金额包含手续费)</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-sm-2 control-label">{:__('手续费')}</label>
+                        <div class="col-sm-8 form-inline">
+                            <input type="text" name="transaction_fee" id="transaction_fee" value="0" class="form-control" onchange="indexController.change_transfer_money($(this))">
+                            <span class='transation_currency'>{if isset($fund_info)}{$fund_info['account_currency']}{/if}</span>
+                        </div>
+                    </div>
+                    {if $account_info['day_quota'] > 0}
+                    <div class="row">
+                        <label class="col-sm-2 control-label"></label>
+                        <div class="col-sm-8 form-inline">
+                            <span class="danger-text">每日转账额度:{$account_info['day_quota']}</span>
+                        </div>
+                    </div>
+                    {/if}
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="form-group inner-div">
+        <div class="col-sm-12">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">{:__('收款方')}</legend>
+
+                <div class="control-group">
+                    <div class="row">
+                        <label class="col-sm-2 control-label"><span class="danger-text">*</span>{:__('余额账户')}</label>
+                        <div class="col-sm-8">
+                                <select name="r_title" class="form-control selectpicker" title="{:__('请选择账户名称')}" data-actions-box="true"
+                                data-live-search="true" onchange="indexController.change_receipt_account($(this))">
+
+                                {foreach $all_fund_list as $k => $v}
+                                <option disabled>{$v['title']}</option>
+                                    {foreach $v['fund_list'] as $_k => $_v}
+                                    <option value="{$_v['id']}">|--{$_v['fund_name']}({$_v['account_currency']})</option>
+                                    {/foreach}
+                                {/foreach}
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-sm-2 control-label">{:__('到账金额')}</label>
+                        <div class="col-sm-8 form-inline">
+                            <input type="text" class="form-control r_money_amount" readonly>
+                            <span class="transation_currency">{if isset($fund_info)}{$fund_info['account_currency']}{/if}</span>
+                            <span class="danger-text">(到账金额 = 转账金额 - 手续费)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <label class="col-sm-2 control-label"><span class="danger-text">*</span>{:__('备注')}</label>
+                        <div class="col-sm-8 form-inline">
+                            <textarea name="r_remark" rows="3" class="form-control" style="width: 100%;"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+
+    
+    <div class="form-group outer-div" style="display: none;">
+        <div class="col-sm-12">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">{:__('收款方')}</legend>
+
+                <div class="control-group">
+
+                    <div class="row">
+                        <label class="col-sm-2 control-label"><span class="danger-text">
+                            <input type="button" class="btn btn-sm btn-primary" onclick="indexController.new_template()" value="{:__('新建模板')}">
+                        </label>
+                        <div class="col-sm-8">
+                            <select class="form-control selectpicker" title="{:__('请选择引用模板')}" data-actions-box="true" onchange="indexController.chanage_transfer_template($(this))">
+                                {foreach $tpl_list as $v}
+                                <option value="{$v['id']}" data-template='{:json_encode($v)}'>{$v['title']}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-sm-2 control-label"><span class="danger-text">*</span>{:__('账户类型')}</label>
+                        <div class="col-sm-8">
+                            <select name="t_account_type" id="t_account_type" class="form-control selectpicker" title="{:__('请选择账户类型')}" data-actions-box="true" onchange='indexController.change_account_type($(this))'>
+                                {foreach account_type_list as $k => $v}
+                                <option value="{$k}">{$v}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row bank_row" style="display:none;">
+                        <label class="col-sm-2 control-label"><span class="danger-text">*</span>{:__('开户银行')}</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="bank_of_account" id="bank_of_account" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <label class="col-sm-2 control-label"><span class="danger-text">*</span>{:__('收款姓名')}</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="receipt_username" id="receipt_username" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <label class="col-sm-2 control-label"><span class="danger-text">*</span>{:__('收款账户')}</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="receipt_account" id="receipt_account" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <label class="col-sm-2 control-label">{:__('到账金额:')}</label>
+                        <div class="col-sm-8 form-inline">
+                            <input type="text" class="form-control r_money_amount" readonly>
+                            <span class="transation_currency"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <label class="col-sm-2 control-label"><span class="danger-text">*</span>{:__('备注')}</label>
+                        <div class="col-sm-8 form-inline">
+                            <textarea name="t_remark" rows="3" class="form-control" style="width: 100%;"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-success btn-embossed ">{:__('确定提交')}</button>
+        </div>
+    </div>
+</form>
+
+{/block}
+
+{block name='js'}
+<script>
+// 阻止默认的提交行为，使用自定义的提交方法
+$('#default_form').on('valid.form', function (e) {
+    e.preventDefault();
+    layer.load();
+    $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: $(this).serializeArray(),
+        dataType: 'JSON',
+        success: function(ret) {
+            layer.closeAll();
+            if (ret.code != 0) layer.alert(ret.msg);
+            else layer.alert(ret.msg, {'yes': function() {parent.location.reload();}});
+        }
+    })
+});
+</script>
+
+{/block}

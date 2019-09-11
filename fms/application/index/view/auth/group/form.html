@@ -1,0 +1,39 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+<form id="add-form" class="form-horizontal dialog-form" role="form" data-toggle="validator" method="POST" action="">
+    <input type="hidden" name="row[rules]" value="{$row.rules ?? ''}" />
+    <div class="container">
+        <section class="content">
+            <div class="form-group">
+                <label class="control-label col-xs-2">{:__('父级')}:</label>
+                <div class="col-xs-8 col-sm-6">
+                    {:build_select('row[pid]', $groupdata, $row.pid ?? 0, ['class'=>'form-control selectpicker', 'data-rule'=>'required'])}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2">{:__('名称')}:</label>
+                <div class="col-xs-4">
+                    <input type="text" class="form-control" id="title" name="row[name]"
+                           data-placeholder-node="{:__('Node tips')}"
+                           data-placeholder-menu="{:__('Menu tips')}"
+                           value="{$row.name ?? ''}"
+                           data-rule="required"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2">{:__('状态')}:</label>
+                <div class="col-xs-8">
+                    {:build_radios('row[status]', ['禁用', '启用'], $row.status ?? 0)}
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class=" layer-footer">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed ">{:__('确定提交')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('重置')}</button>
+        </div>
+    </div>
+</form>
+{/block}

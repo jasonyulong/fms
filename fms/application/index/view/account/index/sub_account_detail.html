@@ -1,0 +1,25 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+
+<div class="box-body">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+        <tr>
+            <th class="text-center">账户</th>
+            <th class="text-center">币种</th>
+        </tr>
+        </thead>
+        <tbody>
+        {if $list.data}
+        {foreach $list.data as $v}
+        <tr>
+            <td class="text-center">{$v['account_name']}</td>
+            <td class="text-center">{$v['account_currency']}</td>
+        </tr>
+        {/foreach}
+        {/if}
+        </tbody>
+    </table>
+</div>
+
+{/block}

@@ -1,0 +1,108 @@
+{extend name="layout/dialog" /}
+{block name='content'}
+<form class="form-horizontal content" method="POST" id="default_form">
+   
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('账户类型')}</label>
+        <div class="col-sm-8">
+            <!-- <input type="text" class="form-control" name="type" value="" readonly> -->
+            <select name="account_type" id="account_type" class="form-control selectpicker" data-url="{:url('/index/Ajax/getThirdAccounts')}" title="请选择" onchange="indexController.change_flow_account_type($(this))">
+                {foreach $third_pay_account_type as $k => $v}
+                <option value="{$k}">{$v}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('账户名称')}</label>
+        <div class="col-sm-8">
+            <select name="account_id" id="account_id" class="form-control selectpicker" title="{:__('请选择')}" data-actions-box="true"
+                data-live-search="true">
+                
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('上传文件')}</label>
+        <div class="col-sm-8">
+            <input type="file" class="form-control" name="file" id="excel_file">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label"></label>
+        <div class="col-sm-8">
+            <span class="text-danger">*{:__('请正确的选择账户，如模板发生变化，请及时联系IT')}</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">{:__('导入历史')}</label>
+        <div class="col-sm-8">
+            <table class="table table-hover small">
+                <thead>
+                    <tr>
+                        <th>任务</th>
+                        <th>创建时间</th>
+                        <th>状态</th>
+                        <th>结果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach $task_list as $v}
+                    <tr>
+                        <td>{$v['task_name']}</td>
+                        <td>{:date('Y-m-d H:i:s', $v['create_time'])}</td>
+                        <td>{if $v['status'] == 1}完成{else /}进行中{/if}</td>
+                        <td>{if $v['status'] == 1}
+                            <input type="button" value="查看" data-msg="{$v['msg']}" onclick="indexController.show_import_msg($(this))">
+                            {/if}</td>
+                    </tr>
+                    {/foreach}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="button" class="btn btn-success btn-embossed" id="submit"> 确定提交</button>
+        </div>
+    </div>
+</form>
+
+
+{/block}
+{block name='js'}
+<script src="__CDN__/assets/plugins/layui/layui.js"></script>
+<script>
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#excel_file' //绑定元素
+            ,url: $('#default_form').attr('action') //上传接口
+            ,accept: 'file' //普通文件
+            ,auto: false
+            ,data: {
+                account_id: function() {return $('#account_id').val();},
+                type: function() {return $('#account_type').val();},
+            }
+            ,bindAction: '#submit'
+            ,before: function(obj){ 
+                layer.load(); 
+            }
+            ,done: function(ret){
+                if (ret.code != 0) parent.layer.alert(ret.msg, {'width':'500px'});
+                else parent.layer.alert(ret.msg, {'yes': function() {parent.location.reload();}, 'width':'500px'});
+                layer.closeAll('loading');
+            }
+            ,error: function(){
+                layer.closeAll('loading');
+            }
+        });
+    });
+</script>
+{/block}

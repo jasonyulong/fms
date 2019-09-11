@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="{$config.language}">
+<head>
+    <!-- 加载样式及META信息 -->
+    {include file="common/meta" /}
+</head>
+<body class="hold-transition lockscreen">
+<div class="lockscreen-wrapper">
+    <div class="lockscreen-logo">
+        <a href="javascript:void(0);"><b>FMS </b>
+            <small class="text-xs">Beta</small>
+        </a>
+    </div>
+    <!-- User name -->
+    <div class="lockscreen-name">{$admin.username}</div>
+
+    <!-- START LOCK SCREEN ITEM -->
+    <div class="lockscreen-item">
+        <!-- lockscreen image -->
+        <div class="lockscreen-image">
+            <img src="{$admin.avatar}" alt="User Image">
+        </div>
+        <!-- /.lockscreen-image -->
+        <!-- lockscreen credentials (contains the form) -->
+        <form class="lockscreen-credentials" id="locks-form" action="{:url('/index/login/locks', ['url' => $url])}">
+            <div class="input-group">
+                <input type="password" class="form-control" id="pd-form-password" placeholder="{:__('Password')}" name="password" autocomplete="off" value=""
+                       data-rule="{:__('Password')}:required;password"/>
+                <div class="input-group-btn">
+                    <button type="submit" class="btn"><i class="fa fa-arrow-right text-muted"></i></button>
+                </div>
+                <span class="msg-box n-right" for="pd-form-password"></span>
+            </div>
+        </form>
+    </div>
+    <!-- /.lockscreen-item -->
+    <div class="help-block text-center">
+        Enter your password to retrieve your session
+    </div>
+    <div class="text-center">
+        <a href="{:url('/index/login')}">Or sign in as a different user</a>
+    </div>
+    <div class="lockscreen-footer text-center">
+        Copyright &copy; 2018-2025 <b>Jeoshi</b><br>
+        All rights reserved
+    </div>
+</div>
+<!-- 加载JS脚本 -->
+{include file="common/script" /}
+<script src="__CDN__/assets/dist/js/login.js"></script>
+<script language="javascript">
+    //防止页面后退
+    history.pushState(null, null, document.URL);
+    window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL);
+    });
+</script>
+</body>
+</html>

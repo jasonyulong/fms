@@ -1,0 +1,85 @@
+{extend name="layout/default" /}
+{block name='content'}
+<div class="container">
+    {include file="common/map" /}
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-default color-palette-box">
+
+                <form action="" method="GET" class="form-inline box-header with-border" role="form">
+                    <button type="button" class="btn btn-sm btn-refresh"><i class="fa fa-refresh"></i></button>
+
+                    <div class="input-group">
+                        <select name="search_field" class="form-control" " data-actions-box="true"
+                                data-live-search="true">
+                            <option value="tpl_name">模板名称</option>
+                            <option value="account">账户</option>
+                            <option value="account_user">姓名</option>
+                            
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="search_value" id="input" class="form-control" value="{$params['search_value'] ?? ''}" placeholder="{:__('请输入关键字')}">
+                    </div>
+                    <div class="input-group">
+                        <button type="submit" class="btn bg-orange btn-sm"><i class="fa fa-search"></i> {:__('搜索')}</button>&nbsp;
+                    </div>
+
+                    {if $auth->check('index/auth/tpl/add')}
+                    <button type="button" class="btn bg-purple btn-sm btn-dialog" href="{:url('/index/auth/tpl/add')}" title="{:__('添加模板')}"><i
+                            class="fa fa-plus-circle"></i> {:__('添加模板')}
+                    </button>
+                    {/if}
+                    
+                </form>
+
+            <div class="box-body">
+                <table id="table" class="table table-bordered table-hover" width="100%">
+                    <head>
+                        <tr>
+                            <th class="text-center">模板名称</th>
+                            <th class="text-center">账户</th>
+                            <th class="text-center">姓名</th>
+                            <th class="text-center">类型</th>
+                            <th class="text-center">收款银行</th>
+                            <th class="text-center">状态</th>
+                            <th class="text-center">操作</th>
+                        </tr>
+                    </head>
+                    <tbody>
+
+                    {foreach $tpl_list as $v}
+                    <tr>
+                        <td class="text-center">{$v['title']}</td>
+                        <td class="text-center">{$v['account']}</td>
+                        <td class="text-center">{$v['account_user']}</td>
+                        <td class="text-center">{$account_type_list[$v['type']]}</td>
+                        <td class="text-center">{if $v['type'] == 2}{$v['type_attr']}{/if}</td>
+                        <td class="text-center">{$status_list[$v['status']]}</td>
+                        <td class="text-center">
+                            {if $auth->check('index/auth/tpl/edit')}
+                            <button type="button"
+                                class="btn btn-success btn-edit btn-dialog btn-xs"
+                                title="{:__('编辑')}"
+                                href="{:url('/index/auth/tpl/edit', ['id' => $v.id])}"><i class="fa fa-pencil"></i> {:__('编辑')}
+                            </button>
+                            {/if}
+                            {if $auth->check('index/auth/tpl/delete')}
+                            <button type="button"
+                                    class="btn btn-danger btn-edit btn-ajax btn-xs"
+                                    options="{confirm:'确定要删除此模板吗？'}"
+                                    title="{:__('删除')}"
+                                    href="{:url('/index/auth/tpl/delete', ['id' => $v.id])}"><i class="fa fa-trash"></i> {:__('删除')}
+                            </button>
+                            {/if}
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+            {include file="layout/page"}
+        </div>
+    </section>
+</div>
+{/block}
